@@ -1,0 +1,105 @@
+import logo from './logo.svg';
+import './App.css';
+import { useState } from 'react';
+function App() {
+  const [inputData,setInputData]=useState({
+   fname:"",
+   lname:"",
+   mail:"",
+   number:""
+  });
+
+  const [savedData,setsavedData]=useState([]);
+  const [isEditing,setIsEditing]=useState(false);
+  const [editIndex,setEditIndex]=useState();
+
+  const handleInputChange=(e)=>{
+    //console.log(e.target.name);
+    const name=e.target.name;
+    const value=e.target.value;
+    setInputData({...inputData,[name]:value});
+  }
+  const handleSubmit=()=>{
+    if(isEditing){
+      const tempArray=savedData.map((data,index)=>{
+        return index===editIndex?inputData:data;
+      })
+      setsavedData(tempArray);
+      setIsEditing(false);
+      setEditIndex(null);
+    }else{
+      setsavedData([...savedData,inputData]);
+      console.log(inputData);
+    }
+    setInputData({
+      fname:"",
+      lname:"",
+      mail:"",
+      number:""
+     })
+  }
+  const handleDelete=(index)=>{
+     console.log(index);
+     const tempArray=[...savedData];
+     tempArray.splice(index,1);
+     setsavedData(tempArray);
+  }
+  const handleEdit=(index)=>{
+   setIsEditing(true);
+   setEditIndex(index);
+   setInputData(savedData[index]);
+  }
+  return (
+    <div className="container mt-5">
+      <div className='row'>
+        {/* <------Form------> */}
+        <div className='col-6'>
+        <div className="mb-3">
+            <input type="text" placeholder='First Name' value={inputData.fname} name='fname' class="form-control" onChange={handleInputChange}/>
+        </div>
+        <div className="mb-3">
+            <input type="text" placeholder='Last Name' value={inputData.lname}name='lname' class="form-control" onChange={handleInputChange}/>
+        </div>
+        <div className="mb-3">
+            <input type="text" placeholder='Mail' value={inputData.mail} name='mail' class="form-control" onChange={handleInputChange}/>
+        </div>
+        <div className="mb-3">
+            <input type="number" placeholder='Mobile Number' value={inputData.number} name='number' class="form-control" onChange={handleInputChange}/>
+        </div>
+        <div class="mb-3">
+            <button type='submit'class='btn btn-primary' onClick={handleSubmit}>Submit</button>
+        </div>
+        </div>
+        {/* ---------Table-------- */}
+        <div className='col-6'>
+        <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">S.No</th>
+      <th scope="col">First</th>
+      <th scope="col">Last</th>
+      <th scope="col">Mail</th>
+      <th scope="col">Phone</th>
+    </tr>
+  </thead>
+  <tbody>
+    {savedData.map((data,index)=>{
+         return <tr>
+         <th>{index+1}</th>
+         <td>{data.fname}</td>
+         <td>{data.lname}</td>
+         <td>{data.mail}</td>
+         <td>{data.number}</td>
+         <td><button type='submit' class='btn btn-primary' onClick={()=>handleEdit(index)}>Edit</button></td>
+         <td><button type='submit' class='btn btn-danger' onClick={()=>handleDelete(index)}>Delete</button></td>
+       </tr>
+    })}
+  </tbody>
+</table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
